@@ -1,5 +1,6 @@
-import { expect } from "chai"
+import { expect, use } from "chai"
 import { User } from "../src/domain/user.entity"
+import { UserInMemoryRepository } from "../src/infra/db/inMemory/inMemory"
 
 
 describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - Regras de negócio", () => {
@@ -60,4 +61,68 @@ describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - R
         const user = new User({ ...userProps })
         expect(() => user.updateAge(15)).to.throw(Error)
       })
-  })
+})
+describe("UserInMemoryRepository Unit Tests All Methods | Testes Unitários do Repositório de Usuário Em memória Todos os métodos", ()=>{
+    let userInMemoryRepository: UserInMemoryRepository
+    beforeEach(()=>{
+        userInMemoryRepository = new UserInMemoryRepository()
+    })
+    it("Should be able to save user in database | Deve ser capaz de salvar um usuário no banco de dados.",async()=>{
+        const user = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+        await userInMemoryRepository.save(user)
+        expect(userInMemoryRepository.users).to.have.length(1)
+    })
+    it("Should be able to list all users saved in database | Deve ser capaz de listar todos os usuários no banco de dados.",async ()=>{
+        const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+        const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+        const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+        await userInMemoryRepository.save(user1)
+        await userInMemoryRepository.save(user2)
+        await userInMemoryRepository.save(user3)
+        const listOfUsers = await userInMemoryRepository.listAll()
+        expect(listOfUsers).to.have.length(3)
+        expect(listOfUsers[0]).to.equal(user1)
+        expect(listOfUsers[1]).to.equal(user2)
+        expect(listOfUsers[2]).to.equal(user3)
+    })
+    it("Should be able to delete user saved in database by id | Deve ser capaz de deletar um usuário salvo no banco de dados através do id.", async ()=>{
+        const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+        const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+        const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+        await userInMemoryRepository.save(user1)
+        await userInMemoryRepository.save(user2)
+        await userInMemoryRepository.save(user3)
+        await userInMemoryRepository.delete(user2.id)
+        const listOfUsers = await userInMemoryRepository.listAll()
+        expect(listOfUsers).to.have.length(2)
+        expect(listOfUsers[0]).to.equal(user1)
+        expect(listOfUsers[1]).to.equal(user3)
+        
+    })
+    it("Should be able to update user saved in database by id | Deve ser capaz de atualizar um usuário salvo no banco de dados através do id.", async ()=>{
+        const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+        const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+        const user3 = new User({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+        await userInMemoryRepository.save(user1)
+        await userInMemoryRepository.save(user2)
+        await userInMemoryRepository.save(user3)
+        await userInMemoryRepository.findAndUpdate(user1.id,{name: "José"})
+        await userInMemoryRepository.findAndUpdate(user2.id,{email: "silvia.guerreiro@devoz.com.br"})
+        await userInMemoryRepository.findAndUpdate(user3.id,{age: 18})
+        const listOfUsers = await userInMemoryRepository.listAll()
+        expect(listOfUsers).to.have.length(3)
+        expect(listOfUsers[0].name).to.equal("José")
+        expect(listOfUsers[1].email).to.equal("silvia.guerreiro@devoz.com.br")
+        expect(listOfUsers[2].age).to.equal(18)
+    })
+    it("Should be able to list specific user saved in database by id | Deve ser capaz de atualizar um usuário salvo no banco de dados através do id.", async()=>{
+        const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+        const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+        const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+        await userInMemoryRepository.save(user1)
+        await userInMemoryRepository.save(user2)
+        await userInMemoryRepository.save(user3)  
+        const userFound = await userInMemoryRepository.listSpecificUser(user2.id)
+        expect(userFound.name).to.equal('Silvia')
+    })
+})

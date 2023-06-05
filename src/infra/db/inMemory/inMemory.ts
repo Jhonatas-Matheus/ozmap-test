@@ -38,7 +38,7 @@ export class UserInMemoryRepository implements UserRepositoryInterface {
             if(updatedUserInfo.email){
                 currentUser.updateEmail(updatedUserInfo.email)
             }
-            this.users.splice(userToBeUpdatedIndex,0, currentUser)
+            this.users.splice(userToBeUpdatedIndex,1, currentUser)
             return currentUser
         }
         throw new Error("User not found");
