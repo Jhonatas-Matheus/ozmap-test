@@ -1,10 +1,34 @@
 import { expect, use } from "chai"
 import { User } from "../src/domain/user.entity"
 import { UserInMemoryRepository } from "../src/infra/db/inMemory/inMemory"
-import { DataSource, Repository } from "typeorm"
+import { DataSource, DataSourceOptions, Repository } from "typeorm"
 import UserTypeOrm from "../src/infra/db/typeorm/user.schema"
-import { AppDataSource } from "../src/infra/db/typeorm/data-source"
 import { UserTypeormRepository } from "../src/infra/db/typeorm/user-typeorm.repository"
+import { server } from "../src/infra/http/koa/src"
+import chaiHttp from "chai-http"
+import chai from "chai"
+chai.use(chaiHttp)
+
+export const dataSourceConfig = (): DataSourceOptions=> {
+  return process.env.DB_TYPE === 'memory'?{
+  type: 'sqlite',
+  database: ':memory:',
+  dropSchema: true,
+  synchronize: true,
+  logging: false,
+  entities: [UserTypeOrm],
+}:{
+  type: 'sqlite',
+  dropSchema: true,
+  database: './src/infra/db/sqlite/database.sqlite',
+  synchronize: true,
+  logging: false,
+  entities: [UserTypeOrm],
+}
+} 
+
+
+const dataSource = new DataSource(dataSourceConfig())
 
 
 describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - Regras de negócio | (InMemory)", () => {
@@ -130,13 +154,18 @@ describe("UserInMemoryRepository Unit Tests All Methods | Testes Unitários do R
         expect(userFound.name).to.equal('Silvia')
     })
 })
-describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do repositório de Usuário do typeorm Todos os Métodos | (InMemory - Document)",()=>{
+describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do repositório de Usuário do typeorm Todos os Métodos | (InMemory - Document)",async ()=>{
   let connection: DataSource
   let typeormRepository: Repository<UserTypeOrm>
   let userTypeormRepository: UserTypeormRepository
+  // before(async()=>{
+  //   if(AppDataSource.isInitialized){
+  //     await AppDataSource.destroy()
+  //   }
+  // })
   beforeEach(async()=>{
-    connection = await AppDataSource.initialize()
-    typeormRepository = AppDataSource.getRepository(UserTypeOrm)
+    connection = await dataSource.initialize()
+    typeormRepository = dataSource.getRepository(UserTypeOrm)
     userTypeormRepository = new UserTypeormRepository(typeormRepository)
   })
   afterEach(async ()=>{
@@ -202,3 +231,5 @@ describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do re
     expect(userFound.name).to.equal('Silvia')
   })
 })
+
+
