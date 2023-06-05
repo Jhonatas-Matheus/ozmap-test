@@ -7,7 +7,7 @@ import { AppDataSource } from "../src/infra/db/typeorm/data-source"
 import { UserTypeormRepository } from "../src/infra/db/typeorm/user-typeorm.repository"
 
 
-describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - Regras de negócio", () => {
+describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - Regras de negócio | (InMemory)", () => {
     it("Should be able to create a new user | Deve ser capaz de criar um usuário", () => {
       const userProps = {
         name: "Jhonatas",
@@ -66,7 +66,7 @@ describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - R
         expect(() => user.updateAge(15)).to.throw(Error)
       })
 })
-describe("UserInMemoryRepository Unit Tests All Methods | Testes Unitários do Repositório de Usuário Em memória Todos os Métodos", ()=>{
+describe("UserInMemoryRepository Unit Tests All Methods | Testes Unitários do Repositório de Usuário Em memória Todos os Métodos | (InMemory)", ()=>{
     let userInMemoryRepository: UserInMemoryRepository
     beforeEach(()=>{
         userInMemoryRepository = new UserInMemoryRepository()
@@ -202,158 +202,3 @@ describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do re
     expect(userFound.name).to.equal('Silvia')
   })
 })
-// describe("User Unit Tests UseCases With Database | Testes Uniários dos Casos de Uso do Usuário Com Banco de dados. ", async () => {
-//   let connection: DataSource
-//   let newInMemoryDatabase: Repository<UserTypeOrm>
-//   before(async () => {
-//     const connectionExists = AppDataSource.isInitialized
-//     if (connectionExists) {
-//       await AppDataSource.destroy()
-//     }
-//     connection = await AppDataSource.initialize()
-//     newInMemoryDatabase = AppDataSource.getRepository(UserTypeOrm)
-//   })
-//   beforeEach(async () => {
-//     // await connection.synchronize(true)
-//     const connectionExists = AppDataSource.isInitialized
-//     if (connectionExists) {
-//       await AppDataSource.destroy()
-//     }
-//     connection = await AppDataSource.initialize()
-//     newInMemoryDatabase = AppDataSource.getRepository(UserTypeOrm);
-//   })
-//   afterEach(async () => {
-//     // await connection.dropDatabase()
-//     await connection.destroy()
-//   })
-//   it("Should be able to save a user in in-memory database | Deve ser capaz de salvar o usuário no banco de dados em memória.", async () => {
-//     const userTypeOrmRepository = new UserTypeormRepository(newInMemoryDatabase)
-//     const createUserUseCase = new CreateUserUseCase(userTypeOrmRepository)
-//     const liseAllUserUseCase = new ListAllUsersUseCase(userTypeOrmRepository)
-//     const userProps1 = {
-//       name: "Jhonatas",
-//       email: "jhonatas@gmail.com",
-//       age: 18,
-//     }
-//     const userProps2 = {
-//       name: "Matheus",
-//       email: "matheus@gmail.com",
-//       age: 20,
-//     }
-//     const savedUser1 = await createUserUseCase.execute({ ...userProps1 })
-//     const savedUser2 = await createUserUseCase.execute({ ...userProps2 })
-//     const response = await liseAllUserUseCase.execute()
-//     expect(response).to.length(2)
-//   })
-//   it("Should be able to delete a user in in-memory database | Deve ser capaz de deletar o usuário no banco de dados em memória.", async () => {
-//     const userTypeOrmRepository = new UserTypeormRepository(newInMemoryDatabase)
-//     const createUserUseCase = new CreateUserUseCase(userTypeOrmRepository)
-//     const deleteUserUseCase = new DeleteUserUseCase(userTypeOrmRepository)
-//     const listAllUsersUseCase = new ListAllUsersUseCase(userTypeOrmRepository)
-//     const userProps1 = {
-//       name: "Jhonatas",
-//       email: "jhonatas@gmail.com",
-//       age: 18,
-//     }
-//     const userProps2 = {
-//       name: "Matheus",
-//       email: "matheus@gmail.com",
-//       age: 20,
-//     }
-//     const userProps3 = {
-//       name: "Julio",
-//       email: "julio@gmail.com",
-//       age: 24,
-//     }
-//     const savedUser1 = await createUserUseCase.execute({ ...userProps1 })
-//     const savedUser2 = await createUserUseCase.execute({ ...userProps2 })
-//     const savedUser3 = await createUserUseCase.execute({ ...userProps3 })
-//     await deleteUserUseCase.execute(savedUser2.id)
-//     const response = await listAllUsersUseCase.execute()
-//     expect(response).to.length(2)
-//   })
-//   it("Should be able list all users in in-memory database | Deve ser capaz de listar todos os usuários no banco de dados em memória.", async () => {
-//     const userTypeOrmRepository = new UserTypeormRepository(newInMemoryDatabase)
-//     const createUserUseCase = new CreateUserUseCase(userTypeOrmRepository)
-//     const listAllUsersUseCase = new ListAllUsersUseCase(userTypeOrmRepository)
-//     const userProps1 = {
-//       name: "Jhonatas",
-//       email: "jhonatas@gmail.com",
-//       age: 18,
-//     }
-//     const userProps2 = {
-//       name: "Matheus",
-//       email: "matheus@gmail.com",
-//       age: 20,
-//     }
-//     const userProps3 = {
-//       name: "Julio",
-//       email: "julio@gmail.com",
-//       age: 24,
-//     }
-//     const savedUser1 = await createUserUseCase.execute({ ...userProps1 })
-//     const savedUser2 = await createUserUseCase.execute({ ...userProps2 })
-//     const savedUser3 = await createUserUseCase.execute({ ...userProps3 })
-//     const response = await listAllUsersUseCase.execute()
-//     expect(response).to.length(3)
-//     expect(response[0].id).to.equal(savedUser1.id)
-//     expect(response[0]).to.deep.equal(savedUser1)
-//   })
-//   it("Should be able list specific user in in-memory database | Deve ser capaz de lista um usuário no banco de dados em memória.", async () => {
-//     const userTypeOrmRepository = new UserTypeormRepository(newInMemoryDatabase)
-//     const createUserUseCase = new CreateUserUseCase(userTypeOrmRepository)
-//     const listSpecificUserUseCase = new ListSpecificUserUseCase(
-//       userTypeOrmRepository
-//     )
-//     const userProps1 = {
-//       name: "Jhonatas",
-//       email: "jhonatas@gmail.com",
-//       age: 18,
-//     }
-//     const userProps2 = {
-//       name: "Matheus",
-//       email: "matheus@gmail.com",
-//       age: 20,
-//     }
-//     const userProps3 = {
-//       name: "Julio",
-//       email: "julio@gmail.com",
-//       age: 24,
-//     }
-//     const savedUser1 = await createUserUseCase.execute({ ...userProps1 })
-//     const savedUser2 = await createUserUseCase.execute({ ...userProps2 })
-//     const savedUser3 = await createUserUseCase.execute({ ...userProps3 })
-//     const response = await listSpecificUserUseCase.execute(savedUser2.id)
-//     expect(response.name).to.equal("Matheus")
-//   }),
-//     it("Should be able update a user in in-memory database | Deve ser capaz de atualizar um usuário no banco de dados em memória.", async () => {
-//       const userTypeOrmRepository = new UserTypeormRepository(
-//         newInMemoryDatabase
-//       )
-//       const createUserUseCase = new CreateUserUseCase(userTypeOrmRepository)
-//       const updateUserUseCase = new UpdateUserUseCase(userTypeOrmRepository)
-//       const userProps1 = {
-//         name: "Jhonatas",
-//         email: "jhonatas@gmail.com",
-//         age: 18,
-//       }
-//       const userProps2 = {
-//         name: "Matheus",
-//         email: "matheus@gmail.com",
-//         age: 20,
-//       }
-//       const userProps3 = {
-//         name: "Julio",
-//         email: "julio@gmail.com",
-//         age: 24,
-//       }
-//       const savedUser1 = await createUserUseCase.execute({ ...userProps1 })
-//       const savedUser2 = await createUserUseCase.execute({ ...userProps2 })
-//       const savedUser3 = await createUserUseCase.execute({ ...userProps3 })
-//       const response = await updateUserUseCase.execute(savedUser1.id, {
-//         email: "oliveira021@mail.com",
-//       })
-//       expect(response.name).to.equal("Jhonatas")
-//       expect(response.email).to.equal("oliveira021@mail.com")
-//     })
-// })
