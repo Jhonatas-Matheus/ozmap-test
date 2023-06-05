@@ -1,6 +1,10 @@
 import { expect, use } from "chai"
 import { User } from "../src/domain/user.entity"
 import { UserInMemoryRepository } from "../src/infra/db/inMemory/inMemory"
+import { DataSource, Repository } from "typeorm"
+import UserTypeOrm from "../src/infra/db/typeorm/user.schema"
+import { AppDataSource } from "../src/infra/db/typeorm/data-source"
+import { UserTypeormRepository } from "../src/infra/db/typeorm/user-typeorm.repository"
 
 
 describe("User Unit Tests Entity | Testes Unitários da Entidade de Usuário - Regras de negócio", () => {
@@ -127,6 +131,76 @@ describe("UserInMemoryRepository Unit Tests All Methods | Testes Unitários do R
     })
 })
 describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do repositório de Usuário do typeorm Todos os Métodos | (InMemory - Document)",()=>{
+  let connection: DataSource
+  let typeormRepository: Repository<UserTypeOrm>
+  let userTypeormRepository: UserTypeormRepository
+  beforeEach(async()=>{
+    connection = await AppDataSource.initialize()
+    typeormRepository = AppDataSource.getRepository(UserTypeOrm)
+    userTypeormRepository = new UserTypeormRepository(typeormRepository)
+  })
+  afterEach(async ()=>{
+    await connection.destroy()
+  })
+  it("Should be able to save user in database | Deve ser capaz de salvar um usuário no banco de dados.",async()=>{
+    const user = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    await userTypeormRepository.save(user)
+    const listOfUsers = await userTypeormRepository.listAll()
+    expect(listOfUsers).to.have.length(1)
+  })
+  it("Should be able to list all users saved in database | Deve ser capaz de listar todos os usuários no banco de dados.",async ()=>{
+  const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+  const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+  const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+  await userTypeormRepository.save(user1)
+  await userTypeormRepository.save(user2)
+  await userTypeormRepository.save(user3)
+  const listOfUsers = await userTypeormRepository.listAll()
+  expect(listOfUsers).to.have.length(3)
+  expect(listOfUsers[0].name).to.equal(user1.name)
+  expect(listOfUsers[1].name).to.equal(user2.name)
+  expect(listOfUsers[2].name).to.equal(user3.name)
+  })
+  it("Should be able to delete user saved in database by id | Deve ser capaz de deletar um usuário salvo no banco de dados através do id.", async ()=>{
+    const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+    await userTypeormRepository.save(user1)
+    await userTypeormRepository.save(user2)
+    await userTypeormRepository.save(user3)
+    await userTypeormRepository.delete(user2.id)
+    const listOfUsers = await userTypeormRepository.listAll()
+    expect(listOfUsers).to.have.length(2)
+    expect(listOfUsers[0].name).to.equal(user1.name)
+    expect(listOfUsers[1].name).to.equal(user3.name)
+    
+  })
+  it("Should be able to update user saved in database by id | Deve ser capaz de atualizar um usuário salvo no banco de dados através do id.", async ()=>{
+    const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    const user3 = new User({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+    await userTypeormRepository.save(user1)
+    await userTypeormRepository.save(user2)
+    await userTypeormRepository.save(user3)
+    await userTypeormRepository.findAndUpdate(user1.id,{name: "José"})
+    await userTypeormRepository.findAndUpdate(user2.id,{email: "silvia.guerreiro@devoz.com.br"})
+    await userTypeormRepository.findAndUpdate(user3.id,{age: 18})
+    const listOfUsers = await userTypeormRepository.listAll()
+    expect(listOfUsers).to.have.length(3)
+    expect(listOfUsers[0].name).to.equal("José")
+    expect(listOfUsers[1].email).to.equal("silvia.guerreiro@devoz.com.br")
+    expect(listOfUsers[2].age).to.equal(18)
+  })
+  it("Should be able to list specific user saved in database by id | Deve ser capaz de atualizar um usuário salvo no banco de dados através do id.", async()=>{
+    const user1 = new User({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    const user2 = new User({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    const user3 = new User({name: "Jhonatas", email: "jose.raupp@devoz.com.br", age: 24})
+    await userTypeormRepository.save(user1)
+    await userTypeormRepository.save(user2)
+    await userTypeormRepository.save(user3)  
+    const userFound = await userTypeormRepository.listSpecificUser(user2.id)
+    expect(userFound.name).to.equal('Silvia')
+  })
 })
 // describe("User Unit Tests UseCases With Database | Testes Uniários dos Casos de Uso do Usuário Com Banco de dados. ", async () => {
 //   let connection: DataSource
