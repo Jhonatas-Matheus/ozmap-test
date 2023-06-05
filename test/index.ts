@@ -158,11 +158,6 @@ describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do re
   let connection: DataSource
   let typeormRepository: Repository<UserTypeOrm>
   let userTypeormRepository: UserTypeormRepository
-  // before(async()=>{
-  //   if(AppDataSource.isInitialized){
-  //     await AppDataSource.destroy()
-  //   }
-  // })
   beforeEach(async()=>{
     connection = await dataSource.initialize()
     typeormRepository = dataSource.getRepository(UserTypeOrm)
@@ -231,5 +226,129 @@ describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do re
     expect(userFound.name).to.equal('Silvia')
   })
 })
+describe("User Route Unit Tests '/user' | Testes Unitários da rota de Usuário '/user' | (InMemory - Document)",async ()=>{
+  let connection: DataSource
+  let typeormRepository: Repository<UserTypeOrm>
+  let userTypeormRepository: UserTypeormRepository
+  beforeEach(async()=>{
+    connection = await dataSource.initialize()
+    typeormRepository = dataSource.getRepository(UserTypeOrm)
+    userTypeormRepository = new UserTypeormRepository(typeormRepository)
+  })
+  afterEach(async ()=>{
+    await connection.destroy()
+  })
+  it("Should be able create a user by method POST | Deve ser capaz de criar um usuário através do método POST",(done)=>{
+    chai
+      .request(server)
+      .post('/user')
+      .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+      .end((err,res)=>{
+        expect(res).to.status(201)
+        expect(res.body._name).to.equal('Raupp')
+        expect(res.body._email).to.equal('jose.raupp@devoz.com.br')
+        expect(res.body._age).to.equal(35)
+        done()
+      })
+  })
+  it("Should be able list all users by method GET | Deve ser capaz de listar todos os usuário através do método GET",async()=>{
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    await  chai
+      .request(server)
+      .post('/user')
+      .send({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+    const response = await chai
+      .request(server)
+      .get('/user')
+    expect(response.body).to.length(3)
+  })
+  it("Should be able delete user by method DELETE | Deve ser capaz de deletar um usuário através do método DELETE",async()=>{
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    await  chai
+      .request(server)
+      .post('/user')
+      .send({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+    const userToBeDeleted = await chai.request(server).get('/user')
+    await chai
+      .request(server)
+      .delete(`/user/${userToBeDeleted.body[0]._id}`)
+    const response = await chai
+      .request(server)
+      .get('/user')
+    expect(response.body).to.length(2)
+  })
+  it("Should be able update user by method UPDATE | Deve ser capaz de atualizar um usuário através do método UPDATE",async()=>{
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    await  chai
+      .request(server)
+      .post('/user')
+      .send({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+    const listOfClients = await chai.request(server).get('/user')
+    await chai
+      .request(server)
+      .patch(`/user/${listOfClients.body[0]._id}`)
+      .send({name: "José"})
+    await chai
+      .request(server)
+      .patch(`/user/${listOfClients.body[1]._id}`)
+      .send({email: "silvia.guerreiro@devoz.com.br"})
+    await chai
+      .request(server)
+      .patch(`/user/${listOfClients.body[2]._id}`)
+      .send({age: 18})
+    const response = await chai
+      .request(server)
+      .get('/user')
+    expect(response.body).to.length(3)
+    expect(response.body[0]._name).to.equal('José')
+    expect(response.body[1]._email).to.equal('silvia.guerreiro@devoz.com.br')
+    expect(response.body[2]._age).to.equal(18)
 
+
+  })
+  it("Should be able list specific user by method GET (/user/:id) | Deve ser capaz de listar um usuário específico do método GET (/user/:id)",async()=>{
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
+    await  chai
+      .request(server)
+      .post('/user')
+      .send({name: "Silvia", email: "silvia@devoz.com.br", age: 25})
+    await chai
+      .request(server)
+      .post('/user')
+      .send({name: "Jhonatas", email: "jhonatas@devoz.com.br", age: 24})
+    const listOfClients = await chai.request(server).get('/user')
+    const response = await chai
+      .request(server)
+      .get(`/user/${listOfClients.body[1]._id}`)
+    expect(response.body._name).to.equal('Silvia')
+    expect(response.body._email).to.equal('silvia@devoz.com.br')
+    expect(response.body._age).to.equal(25)
+
+
+  })
+})
 
