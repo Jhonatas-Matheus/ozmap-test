@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: CRUD User Test OzMap
+  description: Descrição da sua API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /user:
+    get:
+      summary: List All Users | Listar todos os usuários
+      responses:
+        '200':
+          description: Sucess
+          content:
+             application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateUserOutput"
+        '500':
+          description: Internal Server Error
+      tags: ["User"]
+    post:
+      summary: Create a user | Criar usuário
+      tags: ["User"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserInput"
+            examples:
+                user:
+                  value:
+                    name: "Raupp"
+                    email: "jose.raupp@devoz.com.br"
+                    age: 35
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/CreateUserOutput"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{id}:
+    patch:
+      summary: Editar a user | Editar usuário
+      tags: ["User"]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID to be edited
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserInput"
+            examples:
+                user:
+                  value:
+                    name: "José"
+      responses:
+        '200':
+          description: Sucess
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserOutput"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      summary: List All Users | Listar todos os usuários
+      tags: ["User"]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID to be deleted
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    get:
+      summary: List Specific User | Listar usuário específico
+      tags: ["User"]
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: User ID to be find
+        schema:
+          type: string
+      responses:
+        '200':
+            description: Sucess
+            content:
+               application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CreateUserOutput"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+        
+components:
+  schemas:
+    "CreateUserInput":
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        age:
+          type: number
+      required:
+        - name
+        - email
+        - age
+
+    "UpdateUserInput":
+      type: object
+      properties:
+        name: 
+          type: string
+        email:
+          type: string
+        age:
+          type: number
+    "CreateUserOutput":
+      type: object
+      properties:
+        id:
+          type: string
+        name: 
+          type: string
+        email:
+          type: string
+        age:
+          type: number
+    
