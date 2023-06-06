@@ -11,7 +11,7 @@ paths:
       summary: List All Users | Listar todos os usuários
       responses:
         '200':
-          description: Sucesso
+          description: Sucess
           content:
              application/json:
               schema:
@@ -19,13 +19,13 @@ paths:
                 items:
                   $ref: "#/components/schemas/CreateUserOutput"
         '500':
-          description: Internal Server Error | Erro interno do servidor
+          description: Internal Server Error
       tags: ["User"]
     post:
       summary: Create a user | Criar usuário
       tags: ["User"]
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -42,18 +42,54 @@ paths:
           content:
             application/json:
               schema:
-                    $ref: "#/components/schemas/CreateUserOutput"
+                  $ref: "#/components/schemas/CreateUserOutput"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+  /user/{id}:
+    patch:
+      summary: Editar a user | Editar usuário
+      tags: ["User"]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID do usuário a ser editado
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserInput"
+            examples:
+                user:
+                  value:
+                    name: "José"
+
 components:
   schemas:
     "CreateUserInput":
       type: object
       properties:
-        name: 
+        name:
           type: string
         email:
           type: string
         age:
           type: number
+      required:
+        - name
+        - email
+        - age
+
     "UpdateUserInput":
       type: object
       properties:

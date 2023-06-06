@@ -35,7 +35,6 @@ export class UserTypeormRepository implements UserRepositoryInterface {
   ): Promise<User> {
     const userAlreadyExists = await this.repository.findOneBy({ id: userId });
     if(!userAlreadyExists){
-      console.log('Caiu no if')
       throw new Error("User not Found")
     }
     try {

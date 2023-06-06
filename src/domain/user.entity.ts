@@ -15,7 +15,7 @@ export class User {
   constructor({ age, email, name, id }: UserProps) {
     this._id = id ?? crypto.randomUUID();
     if(age < 18 ){
-      throw new Error("A idade mínima é de 18 anos.")
+      throw new Error("Minimum age is 18 years")
     }
     this._age = age
     this._email = email;
@@ -29,7 +29,7 @@ export class User {
   }
   public updateAge(newAge: number): void{
     if(newAge < 18){
-      throw new Error("A idade mínima é de 18 anos.");
+      throw new Error("Minimum age is 18 years");
     }
     this.age = newAge
   }
