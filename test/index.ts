@@ -11,17 +11,17 @@ import { AppDataSource } from "../src/infra/db/typeorm/data-source"
 chai.use(chaiHttp)
 
 export const dataSourceConfig = (): DataSourceOptions=> {
-  return process.env.DB_TYPE === 'memory'?{
-  type: 'sqlite',
-  database: ':memory:',
+  return process.env.DB_TYPE === 'document'?{
+    type: 'sqlite',
   dropSchema: true,
+  database: './src/infra/db/sqlite/database.sqlite',
   synchronize: true,
   logging: false,
   entities: [UserTypeOrm],
 }:{
   type: 'sqlite',
+  database: ':memory:',
   dropSchema: true,
-  database: './src/infra/db/sqlite/database.sqlite',
   synchronize: true,
   logging: false,
   entities: [UserTypeOrm],

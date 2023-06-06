@@ -3,17 +3,17 @@ import 'dotenv/config'
 import UserTypeOrm from "./user.schema";
 
 export const dataSourceConfig = (): DataSourceOptions=> {
-    return process.env.DB_TYPE === 'memory'?{
+    return process.env.DB_TYPE === 'document'?{
+      type: 'sqlite',
+      dropSchema: true,
+      database: './src/infra/db/sqlite/database.sqlite',
+      synchronize: true,
+      logging: false,
+      entities: [UserTypeOrm],
+  }:{
     type: 'sqlite',
     database: ':memory:',
     dropSchema: true,
-    synchronize: true,
-    logging: false,
-    entities: [UserTypeOrm],
-  }:{
-    type: 'sqlite',
-    dropSchema: true,
-    database: './src/infra/db/sqlite/database.sqlite',
     synchronize: true,
     logging: false,
     entities: [UserTypeOrm],
