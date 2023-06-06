@@ -78,6 +78,7 @@
             }
 
             .btn-submit {
+                cursor: pointer;
                 background-color: #00D256;
                 border: none;
                 padding: 1rem;
