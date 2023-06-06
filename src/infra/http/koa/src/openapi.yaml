@@ -138,9 +138,46 @@ paths:
                 properties:
                   message:
                     type: string
-
-
-
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    get:
+      summary: List Specific User | Listar usuário específico
+      tags: ["User"]
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: User ID to be find
+        schema:
+          type: string
+      responses:
+        '200':
+            description: Sucess
+            content:
+               application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CreateUserOutput"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+        
 components:
   schemas:
     "CreateUserInput":
