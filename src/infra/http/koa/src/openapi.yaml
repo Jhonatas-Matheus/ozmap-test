@@ -52,6 +52,15 @@ paths:
                 properties:
                   message: 
                     type: string
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /user/{id}:
     patch:
       summary: Editar a user | Editar usuário
@@ -60,7 +69,7 @@ paths:
         - in: path
           name: id
           required: true
-          description: ID do usuário a ser editado
+          description: User ID to be edited
           schema:
             type: string
       requestBody:
@@ -73,6 +82,64 @@ paths:
                 user:
                   value:
                     name: "José"
+      responses:
+        '200':
+          description: Sucess
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserOutput"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      summary: List All Users | Listar todos os usuários
+      tags: ["User"]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User ID to be deleted
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
 
 components:
   schemas:

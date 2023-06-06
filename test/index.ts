@@ -7,6 +7,7 @@ import { UserTypeormRepository } from "../src/infra/db/typeorm/user-typeorm.repo
 import { server } from "../src/infra/http/koa/src"
 import chaiHttp from "chai-http"
 import chai from "chai"
+import { AppDataSource } from "../src/infra/db/typeorm/data-source"
 chai.use(chaiHttp)
 
 export const dataSourceConfig = (): DataSourceOptions=> {
@@ -228,28 +229,29 @@ describe("UserTypeormRepository Unit Tests All Methods | Testes Unitários do re
 })
 describe("User Route Unit Tests '/user' | Testes Unitários da rota de Usuário '/user' | (InMemory - Document)",async ()=>{
   let connection: DataSource
-  let typeormRepository: Repository<UserTypeOrm>
-  let userTypeormRepository: UserTypeormRepository
   beforeEach(async()=>{
-    connection = await dataSource.initialize()
-    typeormRepository = dataSource.getRepository(UserTypeOrm)
-    userTypeormRepository = new UserTypeormRepository(typeormRepository)
+    if(!AppDataSource.isInitialized){
+      connection = await AppDataSource.initialize()
+    }
   })
   afterEach(async ()=>{
-    await connection.destroy()
+    await AppDataSource.destroy()
   })
-  it("Should be able create a user by method POST | Deve ser capaz de criar um usuário através do método POST",(done)=>{
-    chai
+  it("Should be able create a user by method POST | Deve ser capaz de criar um usuário através do método POST", async()=>{
+   const response = await chai
       .request(server)
       .post('/user')
       .send({name: "Raupp", email: "jose.raupp@devoz.com.br", age: 35})
-      .end((err,res)=>{
-        expect(res).to.status(201)
-        expect(res.body._name).to.equal('Raupp')
-        expect(res.body._email).to.equal('jose.raupp@devoz.com.br')
-        expect(res.body._age).to.equal(35)
-        done()
-      })
+      expect(response).to.status(201)
+      expect(response.body._name).to.equal('Raupp')
+      expect(response.body._email).to.equal('jose.raupp@devoz.com.br')
+      expect(response.body._age).to.equal(35)
+      // .end((err,res)=>{
+      //   expect(res).to.status(201)
+      //   expect(res.body._name).to.equal('Raupp')
+      //   expect(res.body._email).to.equal('jose.raupp@devoz.com.br')
+      //   expect(res.body._age).to.equal(35)
+      // })
   })
   it("Should be able list all users by method GET | Deve ser capaz de listar todos os usuário através do método GET",async()=>{
     await chai
