@@ -11,7 +11,7 @@
         </main>
         <aside class="right-side">
             <form @submit.prevent="handleSubmit">
-                <h2>Formulário Usuário</h2>
+                <h2>{{ textFormTitle }}</h2>
                 <InputCustom input-title="Nome" input-place-holder="Ex: John Doe" input-type="text" v-model="name" />
                 <InputCustom input-title="Email" input-place-holder="Ex: johndoe@mail.com" input-type="email"
                     v-model="email" />
@@ -74,6 +74,7 @@
             h2 {
                 color: #f1f1f1;
                 margin-bottom: 2rem;
+                text-align: center;
             }
 
             .btn-submit {
@@ -113,7 +114,8 @@ export default {
             users: [] as { _id: string, _name: string, _age: number, _email: string }[],
             typeSubmit: 'create',
             currentUserId: '',
-            textButton: 'Criar'
+            textButton: 'Criar',
+            textFormTitle: 'Criar Usuário'
         }
     },
     methods: {
@@ -144,6 +146,7 @@ export default {
             }
             this.typeSubmit = 'create'
             this.textButton = 'Criar'
+            this.textFormTitle = 'Criar Usuário'
             this.name = ''
             this.email = ''
             this.age = null
@@ -152,6 +155,7 @@ export default {
             this.currentUserId = id
             this.typeSubmit = 'update'
             this.textButton = 'Atualizar'
+            this.textFormTitle = 'Atualizar Usuário'
         },
         async createUser(payload: IUserInput) {
             try {
@@ -198,7 +202,6 @@ export default {
                 });
             }
         }
-
     },
     mounted() {
         this.getUsers()
