@@ -7,14 +7,15 @@
                     :key="user._email" @click:button-edit="setCurrentUserId($event)"
                     @click:button-exclude="deleteUser($event)" />
             </UserList>
+            <button class="api-btn-redirect" @click="redirectToApi">Documentação API</button>
         </main>
         <aside class="right-side">
             <form @submit.prevent="handleSubmit">
                 <h2>Formulário Usuário</h2>
-                <InputCustom input-title="Name" input-place-holder="Ex: John Doe" input-type="text" v-model="name" />
+                <InputCustom input-title="Nome" input-place-holder="Ex: John Doe" input-type="text" v-model="name" />
                 <InputCustom input-title="Email" input-place-holder="Ex: johndoe@mail.com" input-type="email"
                     v-model="email" />
-                <InputCustom input-title="Age" input-place-holder="Ex: 24" input-type="number" v-model="age" />
+                <InputCustom input-title="Idade" input-place-holder="Ex: 24" input-type="number" v-model="age" />
                 <button class="btn-submit" type="submit">
                     {{ textButton }}
                 </button>
@@ -31,6 +32,7 @@
     background-color: #1e1e1e;
 
     .left-side {
+        position: relative;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
@@ -44,7 +46,18 @@
             border-bottom: 2px solid #00D256;
             color: #f1f1f1;
         }
-
+        .api-btn-redirect{
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background-color: #007BFF;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #f1f1f1;
+            font-weight: 700;
+            padding: 1rem;
+        }
 
 
     }
@@ -104,6 +117,9 @@ export default {
         }
     },
     methods: {
+        redirectToApi(){
+            window.open('http://localhost:3000/docs','_blank')
+        },
         handleSubmit() {
             const userData = {} as IUserInput
             if (this.name) {

@@ -1,6 +1,7 @@
 # ProjectTest
 
 ProjectTest é um projeto de backend construído com diversas tecnologias. Ele fornece um conjunto de APIs para gerenciamento de usuários. Abaixo, você encontrará informações sobre as rotas disponíveis, pré-requisitos e um tutorial sobre como executar o projeto. Nele tentei abordar um padrão de projeto baseados em arquitetura limpa (Clean Architecture), aplicando alguns princípios do SOLID como: Single Responsability e Dependency Inversion.
+A aplicação também conta com um front end que está feito em vuejs uma única pagína para demonstar as funcionalidades do backend por meio de uma interface gráfica, logo abaixo haverá um tutorial do necessário para rodar o front-end
 
 ## Rotas Disponíveis
 
@@ -23,7 +24,7 @@ Além disso, você precisa configurar um arquivo `.env` com as seguintes variáv
 - `PORT`: A porta na qual a aplicação será executada (padrão: 3000).
 - `DB_TYPE`: O tipo de banco de dados ('memory' ou 'document') a ser utilizado (padrão: memory).
 
-## Começando
+## Começando - Backend
 
 Para começar com o projeto, siga estas etapas:
 
@@ -37,6 +38,20 @@ Para começar com o projeto, siga estas etapas:
 3. Execute o servidor para testar o funcionamento das rotas utilizando um http client ou a pagina desenvolvida.
     ```shell
     npm run dev
+## Começando - Frontend
+
+**Observação**: O front-end foi configurado para fazer as requisições no backend considerando a porta 3000, caso no momento em que executou o backend certifique-se de que ele está rodando na porta 3000 (Por default ele já foi projetado para rodar na porta 3000, só mudará de porta caso o .env específique outra porta).
+
+Para começar com o projeto, siga estas etapas:
+
+1. Instale as dependências executando o seguinte comando:
+
+   ```shell
+   npm install
+2. Execute o servidor para testar o funcionamento das rotas utilizando um http client ou a pagina desenvolvida.
+    ```shell
+    npm run dev
+3. Acesse o seu navegador através da seguinte URL para acessar o frontend: http://localhost:5173/
 ## Tecnologias Utilizadas
 
 As seguintes tecnologias e bibliotecas foram utilizadas neste projeto:
